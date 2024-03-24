@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone packages repo
-        run: git clone https://hpdell:${{ secrets.GITHUB_TOKEN }}@github.com/hpdell/typst-packages packages
+        run: git clone https://hpdell:${{ secrets.GH_TOKEN }}@github.com/hpdell/typst-packages packages
       - name: Create branch and directory
         working-directory: packages/packages/preview
         run: |
