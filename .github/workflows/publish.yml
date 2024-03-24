@@ -25,7 +25,7 @@ jobs:
           mkdir -p starter-journal-article/${{ github.ref_name }}
       - name: Copy files
         run: |
-          cp -r \
+          cp -r -v \
             template \
             *.typ \
             README.md \
@@ -40,7 +40,7 @@ jobs:
           git add -A
           git commit -m "Release ${{ github.ref_name }}"
           git switch main
-          git merge --squash feat/starter-journal-article
+          git merge feat/starter-journal-article
           git branch -D feat/starter-journal-article
           git push origin main
           
