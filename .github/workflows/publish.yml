@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone packages repo
-        run: git clone https://hpdell:${{ secrets.GH_TOKEN }}@github.com/hpdell/typst-packages packages
+        run: git clone https://hpdell:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
       - name: Create branch and directory
         working-directory: packages/packages/preview
         run: |
@@ -38,7 +38,7 @@ jobs:
           git config --global user.email "${{ env.GIT_USER_EMAIL }}"
           git config --global user.name "${{ env.GIT_USER_NAME }}"
           git add -A
-          git commit -m "Release ${{ github.ref_name }}"
+          git commit -m "starter-journal-article:${{ github.ref_name }}"
           git switch main
           git merge feat/starter-journal-article
           git branch -D feat/starter-journal-article
