@@ -23,9 +23,9 @@ jobs:
         run: |
           cp -r \
             template \
-            lib.typ \
+            *.typ \
             README.md \
-            tunmbnail.png \
+            thumbnail.png \
             typst.toml \
             packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
       - name: Commit and squash
