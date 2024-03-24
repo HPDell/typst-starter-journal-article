@@ -23,7 +23,7 @@ jobs:
         run: rsync -avP --exclude=packages ./ packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
       - name: Commit and squash
         working-directory: packages
-        run:
+        run: |
           git add -A
           git commit -m "Release ${{ github.ref_name }}"
           git switch main
