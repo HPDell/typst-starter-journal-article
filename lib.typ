@@ -64,8 +64,7 @@
   // The paper's keywords.
   keywords: (),
 
-  // The path to a bibliography file if you want to cite some external
-  // works.
+  // The bibliography. Accept value from the built-in `bibliography` function.
   bib: none,
 
   // Paper's content
