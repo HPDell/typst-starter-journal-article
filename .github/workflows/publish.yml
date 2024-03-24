@@ -11,13 +11,13 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone packages repo
-        run: gh repo clone hpdell/typst-packages packages
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git clone https://hpdell:${{ secrets.GITHUB_TOKEN }}@github.com/hpdell/typst-packages packages
       - name: Create branch and directory
         working-directory: packages/packages/preview
         run: |
@@ -42,5 +42,5 @@ jobs:
           git switch main
           git merge --squash feat/starter-journal-article
           git branch -D feat/starter-journal-article
-          git push
+          git push origin main
           
