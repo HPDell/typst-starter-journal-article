@@ -20,7 +20,14 @@ jobs:
           git switch -c feat/starter-journal-article
           mkdir -p starter-journal-article/${{ github.ref_name }}
       - name: Copy files
-        run: rsync -avP --exclude=packages ./ packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
+        run: |
+          cp -r \
+            template \
+            lib.typ \
+            README.md \
+            tunmbnail.png \
+            typst.toml \
+            packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
       - name: Commit and squash
         working-directory: packages
         run: |
