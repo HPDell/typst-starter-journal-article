@@ -1,0 +1,33 @@
+name: "Publish to Typst package"
+
+on:
+  push:
+    tags: "*.*.*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Clone packages repo
+        run: gh repo clone hpdell/typst-packages packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create branch and directory
+        working-directory: packages/packages/preview
+        run: |
+          git switch -c feat/starter-journal-article
+          mkdir -p starter-journal-article/${{ github.ref_name }}
+      - name: Copy files
+        run: rsync -avP --exclude=packages ./ packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
+      - name: Commit and squash
+        working-directory: packages
+        run:
+          git add -A
+          git commit -m "Release ${{ github.ref_name }}"
+          git switch main
+          git merge --squash feat/starter-journal-article
+          git branch -D feat/starter-journal-article
+          git push
+          
