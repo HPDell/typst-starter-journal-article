@@ -1,7 +1,7 @@
 #import "@preview/starter-journal-article:0.1.1": article, author-meta
 
 #show: article.with(
-    title: "Artile Title",
+    title: "Article Title",
     authors: (
       "Author One": author-meta(
         "UCL", "TSU",
