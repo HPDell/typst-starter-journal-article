@@ -72,8 +72,6 @@
 ) = {
   // Set document properties
   set document(title: title, author: authors.keys())
-  set page(numbering: "1", number-align: center)
-  set text(font: ("Times New Roman", "STIX Two Text", "serif"), lang: "en")
   show footnote.entry: it => [
     #set par(hanging-indent: 0.54em)
     #it.note #it.note.body
@@ -82,113 +80,107 @@
   show "cofirst-author-mark": [These authors contributed equally to this work.]
 
   // Title block
-  align(center)[
-    #block(text(size: 1.75em, weight: "bold", title))
-  ]
+  block(width: 100%, {
+    set align(center)
+    text(size: 1.75em, weight: "bold", title)
+  })
 
   v(1em)
 
   // Authors and affiliations
-  align(left)[
-
+  block(width: 100%, {
+    set align(left)
     // Restore affiliations' keys for looking up later
     // to show superscript labels of affiliations for each author.
-    #let inst_keys = affiliations.keys()
+    let inst_keys = affiliations.keys()
 
     // Find co-fisrt authors
-    #let cofirst_index = authors.values().enumerate().filter(
+    let cofirst_index = authors.values().enumerate().filter(
       meta => "cofirst" in meta.at(1) and meta.at(1).at("cofirst") == true
     ).map(it => it.at(0))
 
     // Authors' block
-    #block([
-      // Process the text for each author one by one
-      #for (ai, au) in authors.keys().enumerate() {
-        let au_meta = authors.at(au)
-        // Don't put comma before the first author
-        if ai != 0 {
-          text([, ])
-        }
-        // Write auther's name
-        if au_meta.keys().contains("name") and au_meta.name != none {
-          text([#au_meta.name])
-        } else {
-          text([#au])
-        }
-        
-        // Get labels of author's affiliation
-        let au_inst_id = au_meta.affiliation.pos()
-        let au_inst_primary = ""
-        // Test whether the author belongs to multiple affiliations
-        if type(au_inst_id) == array {
-          // If the author belongs to multiple affiliations,
-          // record the first affiliation as the primary affiliation,
-          au_inst_primary = affiliations.at(au_inst_id.first())
-          // and convert each affiliation's label to index
-          let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id) + 1)
-          // Output affiliation
-          super(typographic: false, size: 0.6em, (au_inst_index.map(it => str(it)).join(",")))
-        } else if (type(au_inst_id) == str) {
-          // If the author belongs to only one affiliation,
-          // set this as the primary affiliation
-          au_inst_primary = affiliations.at(au_inst_id)
-          // convert the affiliation's label to index
-          let au_inst_index = inst_keys.position(key => key == au_inst_id) + 1
-          // Output affiliation
-          super(typographic: false)[#au_inst_index]
-        }
-
-        // Corresponding author
-        if au_meta.keys().contains("email") or au_meta.keys().contains("address") {
-          footnote[
-            Corresponding author. Address:
-            #if not au_meta.keys().contains("address") or au_meta.address == "" {
-              [#au_inst_primary.]
-            }
-            #if au_meta.keys().contains("email") and au_meta.email != none {
-              [Email: #underline(au_meta.email).]
-            }
-          ]
-        }
-
-        if cofirst_index.len() > 0 {
-          if ai == 0 {
-            footnote("cofirst-author-mark")
-          } else if cofirst_index.contains(ai) {
-            locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
-          }
-        }
-
+    // Process the text for each author one by one
+    for (ai, au) in authors.keys().enumerate() {
+      let au_meta = authors.at(au)
+      // Don't put comma before the first author
+      if ai != 0 {
+        [, ]
       }
-    ])
+      // Write auther's name
+      let aname = if au_meta.keys().contains("name") and au_meta.name != none {
+        au_meta.name
+      } else {
+        au
+      }
+      [#aname]
+      
+      // Get labels of author's affiliation
+      let au_inst_id = au_meta.affiliation.pos()
+      let au_inst_primary = ""
+      // Test whether the author belongs to multiple affiliations
+      if type(au_inst_id) == array {
+        // If the author belongs to multiple affiliations,
+        // record the first affiliation as the primary affiliation,
+        au_inst_primary = affiliations.at(au_inst_id.first())
+        // and convert each affiliation's label to index
+        let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id) + 1)
+        // Output affiliation
+        super(typographic: false, size: 0.6em, (au_inst_index.map(it => str(it)).join(",")))
+      } else if (type(au_inst_id) == str) {
+        // If the author belongs to only one affiliation,
+        // set this as the primary affiliation
+        au_inst_primary = affiliations.at(au_inst_id)
+        // convert the affiliation's label to index
+        let au_inst_index = inst_keys.position(key => key == au_inst_id) + 1
+        // Output affiliation
+        super(typographic: false)[#au_inst_index]
+      }
 
-    #v(-0.2em)
+      // Corresponding author
+      if au_meta.keys().contains("email") or au_meta.keys().contains("address") {
+        footnote[
+          Corresponding author. Address:
+          #if not au_meta.keys().contains("address") or au_meta.address == "" {
+            [#au_inst_primary.]
+          }
+          #if au_meta.keys().contains("email") and au_meta.email != none {
+            [Email: #underline(au_meta.email).]
+          }
+        ]
+      }
+
+      if cofirst_index.len() > 0 {
+        if ai == 0 {
+          footnote("cofirst-author-mark")
+        } else if cofirst_index.contains(ai) {
+          locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
+        }
+      }
+
+    }
+
+    v(-0.2em)
 
     // Affiliation block
-    #block([
-      #set par(leading: 0.4em)
-      #for (ik, key) in inst_keys.enumerate() {
+    block({
+      set par(leading: 0.4em)
+      for (ik, key) in inst_keys.enumerate() {
         text(size: 0.8em, [#super([#(ik+1)]) #(affiliations.at(key))])
         linebreak()
       }
-    ])
-  ]
+    })
+  })
 
   // Abstract and keyword block
   if abstract != [] {
-    v(1em)
-    
-    block([
-      #heading([Abstract])
-      #abstract
-  
-      #if keywords.len() > 0 {
-        text(weight: "bold", [Key words: ])
-        text([#keywords.join([; ]).])
-      }
-    ])
+    heading([Abstract])
+    abstract
 
-    v(1em)
+    if keywords.len() > 0 {
+      text(weight: "bold", [Key words: ])
+      text([#keywords.join([; ]).])
+    }
   }
 
   // Display contents
