@@ -23,6 +23,78 @@
   info
 }
 
+#let default-title(title) = {
+  show: block.with(width: 100%)
+  set align(center)
+  set text(size: 1.75em, weight: "bold")
+  title
+}
+
+#let default-author(author) = {
+  text(author.name)
+  super(author.insts.map(it => str(it)).join(","))
+  if author.corresponding {
+    footnote[
+      Corresponding author. Address: #author.address.
+      #if author.email != none {
+        [Email: #underline(author.email).]
+      }
+    ]
+  }
+  if author.cofirst == "thefirst" {
+    footnote("cofirst-author-mark")
+  } else if author.cofirst == "cofirst" {
+    locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
+  }
+}
+
+#let default-author-list(authors, template: default-author) = {
+  authors.map(it => template(it)).join(", ")
+}
+
+#let default-affiliation(insts) = {
+  show: block.with(width: 100%)
+  set par(leading: 0.4em)
+  for (ik, key) in insts.keys().enumerate() {
+    text(size: 0.8em, [#super([#(ik+1)]) #(insts.at(key))])
+    linebreak()
+  }
+}
+
+#let default-abstract(abstract, keywords) = {
+  // Abstract and keyword block
+  if abstract != [] {
+    stack(
+      dir: ttb,
+      spacing: 1em,
+      ..([
+        #heading([Abstract])
+        #abstract
+      ], if keywords.len() > 0 {
+        text(weight: "bold", [Key words: ])
+        text([#keywords.join([; ]).])
+      } else {none} )
+    )
+  }
+}
+
+#let default-bibliography(bib) = {
+  show bibliography: set text(1em)
+  show bibliography: set par(first-line-indent: 0em)
+  set bibliography(title: [References], style: "apa")
+  bib
+}
+
+#let default-body(body) = {
+  show heading.where(level: 1): it => block(above: 1.5em, below: 1.5em)[
+    #set pad(bottom: 2em, top: 1em)
+    #it.body
+  ]
+  set par(first-line-indent: 2em)
+  set footnote(numbering: "1")
+  body
+}
+
 #let article(
   // Article's Title
   title: "Article Title",
@@ -67,6 +139,9 @@
   // The bibliography. Accept value from the built-in `bibliography` function.
   bib: none,
 
+  // 
+  template: (:),
+
   // Paper's content
   body
 ) = {
@@ -79,128 +154,113 @@
   set footnote(numbering: "*")
   show "cofirst-author-mark": [These authors contributed equally to this work.]
 
-  // Title block
-  block(width: 100%, {
-    set align(center)
-    text(size: 1.75em, weight: "bold", title)
-  })
+  let template = (
+    title: default-title,
+    author-list: default-author-list,
+    author: default-author,
+    affiliation: default-affiliation,
+    abstract: default-abstract,
+    bibliography: default-bibliography,
+    body: default-body,
+    ..template,
+  )
 
-  v(1em)
+  // Title block
+  (template.title)(title)
+
+  set align(left)
+  // Restore affiliations' keys for looking up later
+  // to show superscript labels of affiliations for each author.
+  let inst_keys = affiliations.keys()
+
+  // Find co-fisrt authors
+  let cofirst_index = authors.values().enumerate().filter(
+    meta => "cofirst" in meta.at(1) and meta.at(1).at("cofirst") == true
+  ).map(it => it.at(0))
+
+  let author_list = ()
 
   // Authors and affiliations
-  block(width: 100%, {
-    set align(left)
-    // Restore affiliations' keys for looking up later
-    // to show superscript labels of affiliations for each author.
-    let inst_keys = affiliations.keys()
+  // Authors' block
+  // Process the text for each author one by one
+  for (ai, au) in authors.keys().enumerate() {
+    let author_list_item = (
+      name: none,
+      insts: (),
+      corresponding: false,
+      cofirst: "no",
+      address: none,
+      email: none,
+    )
 
-    // Find co-fisrt authors
-    let cofirst_index = authors.values().enumerate().filter(
-      meta => "cofirst" in meta.at(1) and meta.at(1).at("cofirst") == true
-    ).map(it => it.at(0))
+    let au_meta = authors.at(au)
+    // Write auther's name
+    let aname = if au_meta.keys().contains("name") and au_meta.name != none {
+      au_meta.name
+    } else {
+      au
+    }
+    author_list_item.insert("name", aname)
+    
+    // Get labels of author's affiliation
+    let au_inst_id = au_meta.affiliation.pos()
+    let au_inst_primary = ""
+    // Test whether the author belongs to multiple affiliations
+    if type(au_inst_id) == array {
+      // If the author belongs to multiple affiliations,
+      // record the first affiliation as the primary affiliation,
+      au_inst_primary = affiliations.at(au_inst_id.first())
+      // and convert each affiliation's label to index
+      let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id) + 1)
+      // Output affiliation
+      author_list_item.insert("insts", au_inst_index)
+    } else if (type(au_inst_id) == str) {
+      // If the author belongs to only one affiliation,
+      // set this as the primary affiliation
+      au_inst_primary = affiliations.at(au_inst_id)
+      // convert the affiliation's label to index
+      let au_inst_index = inst_keys.position(key => key == au_inst_id) + 1
+      // Output affiliation
+      author_list_item.insert("insts", (au_inst_index,))
+    }
 
-    // Authors' block
-    // Process the text for each author one by one
-    for (ai, au) in authors.keys().enumerate() {
-      let au_meta = authors.at(au)
-      // Don't put comma before the first author
-      if ai != 0 {
-        [, ]
-      }
-      // Write auther's name
-      let aname = if au_meta.keys().contains("name") and au_meta.name != none {
-        au_meta.name
-      } else {
-        au
-      }
-      [#aname]
+    // Corresponding author
+    if au_meta.keys().contains("email") or au_meta.keys().contains("address") {
+      author_list_item.insert("corresponding", true)
+      let address = if not au_meta.keys().contains("address") or au_meta.address == "" {
+        au_inst_primary
+      } else { au_meta.address }
+      author_list_item.insert("address", address)
       
-      // Get labels of author's affiliation
-      let au_inst_id = au_meta.affiliation.pos()
-      let au_inst_primary = ""
-      // Test whether the author belongs to multiple affiliations
-      if type(au_inst_id) == array {
-        // If the author belongs to multiple affiliations,
-        // record the first affiliation as the primary affiliation,
-        au_inst_primary = affiliations.at(au_inst_id.first())
-        // and convert each affiliation's label to index
-        let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id) + 1)
-        // Output affiliation
-        super(typographic: false, size: 0.6em, (au_inst_index.map(it => str(it)).join(",")))
-      } else if (type(au_inst_id) == str) {
-        // If the author belongs to only one affiliation,
-        // set this as the primary affiliation
-        au_inst_primary = affiliations.at(au_inst_id)
-        // convert the affiliation's label to index
-        let au_inst_index = inst_keys.position(key => key == au_inst_id) + 1
-        // Output affiliation
-        super(typographic: false)[#au_inst_index]
-      }
-
-      // Corresponding author
-      if au_meta.keys().contains("email") or au_meta.keys().contains("address") {
-        footnote[
-          Corresponding author. Address:
-          #if not au_meta.keys().contains("address") or au_meta.address == "" {
-            [#au_inst_primary.]
-          }
-          #if au_meta.keys().contains("email") and au_meta.email != none {
-            [Email: #underline(au_meta.email).]
-          }
-        ]
-      }
-
-      if cofirst_index.len() > 0 {
-        if ai == 0 {
-          footnote("cofirst-author-mark")
-        } else if cofirst_index.contains(ai) {
-          locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
-        }
-      }
-
+      let email = if au_meta.keys().contains("email") and au_meta.email != none {
+        au_meta.email
+      } else { none }
+      author_list_item.insert("email", email)
     }
 
-    v(-0.2em)
-
-    // Affiliation block
-    block({
-      set par(leading: 0.4em)
-      for (ik, key) in inst_keys.enumerate() {
-        text(size: 0.8em, [#super([#(ik+1)]) #(affiliations.at(key))])
-        linebreak()
+    if cofirst_index.len() > 0 {
+      if ai == 0 {
+        author_list_item.insert("cofirst", "thefirst")
+      } else if cofirst_index.contains(ai) {
+        author_list_item.insert("cofirst", "cofirst")
       }
-    })
-  })
-
-  // Abstract and keyword block
-  if abstract != [] {
-    heading([Abstract])
-    abstract
-
-    if keywords.len() > 0 {
-      text(weight: "bold", [Key words: ])
-      text([#keywords.join([; ]).])
     }
+
+    author_list.push(author_list_item)
   }
 
-  // Display contents
+  (template.author-list)(author_list, template: template.author)
 
-  show heading.where(level: 1): it => block(above: 1.5em, below: 1.5em)[
-    #set pad(bottom: 2em, top: 1em)
-    #it.body
-  ]
+  (template.affiliation)(affiliations)
 
-  set par(first-line-indent: 2em)
+  (template.abstract)(abstract, keywords)
 
-  set footnote(numbering: "1")
+  show: template.body
   
   body
 
   // Display bibliography.
   if bib != none {
-    show bibliography: set text(1em)
-    show bibliography: set par(first-line-indent: 0em)
-    set bibliography(title: [References], style: "apa")
-    bib
+    (template.bibliography)(bib)
   }
 }
