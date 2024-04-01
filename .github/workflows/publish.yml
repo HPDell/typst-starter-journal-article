@@ -40,7 +40,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone packages repo
-        run: git clone https://hpdell:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
+        run: git clone https://${{ env.GIT_USER_NAME }}:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
       - name: Get version number
         run: |
           pip install toml-cli
