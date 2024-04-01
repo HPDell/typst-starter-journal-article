@@ -46,15 +46,15 @@ jobs:
           pip install toml-cli
           echo "PKG_VERSION=`toml get --toml-path typst.toml package.version`" >> "$GITHUB_ENV"
       - name: Create branch and copy files
-        working-directory: packages/packages/preview
         run: |
           git switch -c feat/${{ env.PACKAGE_NAME }}
-          mkdir -p ${{ env.PACKAGE_NAME }}/$PKG_VERSION
+          mkdir -p packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION
           rsync -av \
             --exclude=.git \
             --exclude=.github \
             --exclude=.gitignore \
             --exclude=.vscode \
+            --exclude=packages \
             ./ \
             packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
           echo "PKG_COMMIT_MSG=`git log --format='%s' -n 1`" >> "$GITHUB_ENV"
