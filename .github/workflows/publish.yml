@@ -57,7 +57,7 @@ jobs:
             --exclude=packages \
             ./ \
             packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
-          export PKG_COMMIT_MSG=`git log --format='%s' -n 1`"
+          export PKG_COMMIT_MSG=`git log --format='%s' -n 1`
           git add -A
           git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
       - name: Merge and push
