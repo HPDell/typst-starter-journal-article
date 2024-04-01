@@ -63,7 +63,7 @@ jobs:
             packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
           export PKG_COMMIT_MSG=`git log --format='%s' -n 1`
           git add -A
-          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
+          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION"
           git switch main
           git merge feat/${{ env.PACKAGE_NAME }}
           git branch -D feat/${{ env.PACKAGE_NAME }}
