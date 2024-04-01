@@ -2,14 +2,37 @@ name: "Publish to Typst package"
 
 on:
   push:
-    tags: "*.*.*"
+    branches: 
+      - main
+      - release-*
 
 env:
   GIT_USER_EMAIL: huyg0180110559@outlook.com
   GIT_USER_NAME: HPDell
+  PACKAGE_NAME: starter-journal-article
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Typst Build
+        uses: typst-community/setup-typst@v3
+      - name: Install toml-cli
+        run: pip install toml-cli
+      - name: Copy to preview packages
+        run: |
+          export PKG_VERSION=`toml get --toml-path typst.toml "package.version"`
+          export PKG_PREVIEW_HOME="$HOME/.cache/typst/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/"
+          mkdir -p $PKG_PREVIEW_HOME
+          rsync -avP ./ $PKG_PREVIEW_HOME
+      - name: Test build example
+        run: typst compile example.typ
+
   publish:
+    needs: [build]
+    if: startsWith(github.ref_name, 'release-')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,29 +41,31 @@ jobs:
         uses: actions/checkout@v4
       - name: Clone packages repo
         run: git clone https://hpdell:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
-      - name: Create branch and directory
+      - name: Get version number
+        run: |
+          pip install toml-cli
+          echo "PKG_VERSION=`toml get --toml-path typst.toml package.version`" >> "$GITHUB_ENV"
+      - name: Create branch and copy files
         working-directory: packages/packages/preview
         run: |
-          git switch -c feat/starter-journal-article
-          mkdir -p starter-journal-article/${{ github.ref_name }}
-      - name: Copy files
-        run: |
-          cp -r -v \
-            template \
-            *.typ \
-            README.md \
-            thumbnail.png \
-            typst.toml \
-            packages/packages/preview/starter-journal-article/${{ github.ref_name }}/
+          git switch -c feat/${{ env.PACKAGE_NAME }}
+          mkdir -p ${{ env.PACKAGE_NAME }}/$PKG_VERSION
+          rsync -av \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude=.gitignore \
+            --exclude=.vscode \
+            ./ \
+            packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
+          echo "PKG_COMMIT_MSG=`git log --format='%s' -n 1`" >> "$GITHUB_ENV"
       - name: Commit and squash
         working-directory: packages
         run: |
           git config --global user.email "${{ env.GIT_USER_EMAIL }}"
           git config --global user.name "${{ env.GIT_USER_NAME }}"
           git add -A
-          git commit -m "starter-journal-article:${{ github.ref_name }}"
+          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
           git switch main
-          git merge feat/starter-journal-article
-          git branch -D feat/starter-journal-article
+          git merge feat/${{ env.PACKAGE_NAME }}
+          git branch -D feat/${{ env.PACKAGE_NAME }}
           git push origin main
-          
