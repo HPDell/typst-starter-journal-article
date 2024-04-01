@@ -28,7 +28,11 @@
     abstract: [#lorem(100)],
     keywords: ("Typst", "Template", "Journal Article"),
     template: (
-      author-list: author-list
+      title: (title) => {
+        set align(left)
+        set text(size: 1.5em, weight: "bold", style: "italic")
+        title
+      }
     )
 )
 
