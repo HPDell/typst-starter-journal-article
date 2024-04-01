@@ -40,7 +40,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone packages repo
-        run: git clone https://${{ env.GIT_USER_NAME }}:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
+        run: |
+          git config --global user.email "${{ env.GIT_USER_EMAIL }}"
+          git config --global user.name "${{ env.GIT_USER_NAME }}"
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+          git clone https://github.com/HPDell/typst-packages.git packages
       - name: Get version number
         run: |
           pip install toml-cli
@@ -59,8 +63,6 @@ jobs:
             ../ \
             packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
           export PKG_COMMIT_MSG=`git log --format='%s' -n 1`
-          git config --global user.email "${{ env.GIT_USER_EMAIL }}"
-          git config --global user.name "${{ env.GIT_USER_NAME }}"
           git add -A
           git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
           git switch main
