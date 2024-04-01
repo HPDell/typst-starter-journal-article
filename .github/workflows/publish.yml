@@ -45,7 +45,7 @@ jobs:
         run: |
           pip install toml-cli
           echo "PKG_VERSION=`toml get --toml-path typst.toml package.version`" >> "$GITHUB_ENV"
-      - name: Create branch and copy files
+      - name: Commit changes
         run: |
           git switch -c feat/${{ env.PACKAGE_NAME }}
           mkdir -p packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION
@@ -57,14 +57,14 @@ jobs:
             --exclude=packages \
             ./ \
             packages/packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
-          echo "PKG_COMMIT_MSG=`git log --format='%s' -n 1`" >> "$GITHUB_ENV"
-      - name: Commit and squash
+          export PKG_COMMIT_MSG=`git log --format='%s' -n 1`"
+          git add -A
+          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
+      - name: Merge and push
         working-directory: packages
         run: |
           git config --global user.email "${{ env.GIT_USER_EMAIL }}"
           git config --global user.name "${{ env.GIT_USER_NAME }}"
-          git add -A
-          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n$PKG_COMMIT_MSG"
           git switch main
           git merge feat/${{ env.PACKAGE_NAME }}
           git branch -D feat/${{ env.PACKAGE_NAME }}
