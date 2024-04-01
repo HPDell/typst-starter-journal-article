@@ -43,8 +43,7 @@ jobs:
         run: |
           git config --global user.email "${{ env.GIT_USER_EMAIL }}"
           git config --global user.name "${{ env.GIT_USER_NAME }}"
-          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
-          git clone https://HPDell@github.com/HPDell/typst-packages.git packages
+          git clone https://${{ env.GIT_USER_NAME }}:${{ secrets.GH_TOKEN }}@github.com/HPDell/typst-packages.git packages
       - name: Get version number
         run: |
           pip install toml-cli
@@ -68,5 +67,4 @@ jobs:
           git switch main
           git merge feat/${{ env.PACKAGE_NAME }}
           git branch -D feat/${{ env.PACKAGE_NAME }}
-          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
           git push origin main
