@@ -139,7 +139,15 @@
   // The bibliography. Accept value from the built-in `bibliography` function.
   bib: none,
 
-  // 
+  // Templates for the following parts:
+  // - `title`: how to show the title of this article.
+  // - `author-list`: how to show the list of the authors.
+  // - `author`: how to show each author's information.
+  // - `affiliation`: how to show the affiliations.
+  // - `abstract`: how to show the abstract and keywords.
+  // - `bibliography`: how to show the bibliography.
+  // - `body`: how to show main text.
+  // Please see below for more infomation.
   template: (:),
 
   // Paper's content

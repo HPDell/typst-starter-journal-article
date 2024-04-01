@@ -1,4 +1,4 @@
-# A starter template for journal articles
+# A configurable starter template for journal articles
 
 This package provides a template for writing journal articles
 to organise authors, institutions, and information of corresponding authors.
@@ -40,6 +40,14 @@ Arguments:
 - `abstract`: The paper's abstract. Default: `[]`.
 - `keywords`: The paper's keywords. Default: `[]`.
 - `bib`: The bibliography. Accept value from the built-in `bibliography` function. Default: `none`.
+- `template`: Templates for the following parts. Please see below for more informations
+  - `title`: how to show the title of this article.
+  - `author-list`: how to show the list of the authors.
+  - `author`: how to show each author's information.
+  - `affiliation`: how to show the affiliations.
+  - `abstract`: how to show the abstract and keywords.
+  - `bibliography`: how to show the bibliography.
+  - `body`: how to show main text.
 
 ### `author-meta`
 
@@ -52,6 +60,85 @@ Arguments:
 - `alias`: The display name of the author. Default: `none`.
 - `address`: The address of the author. Default: `none`.
 - `cofirst`: Whether the author is the co-first author. Default: `false`.
+
+## Default templates
+
+The following code shows how the default templates are defined.
+You can override any of the by setting the `template` argument in the `article()` function to customise the template.
+
+```typst
+#let default-title(title) = {
+  show: block.with(width: 100%)
+  set align(center)
+  set text(size: 1.75em, weight: "bold")
+  title
+}
+
+#let default-author(author) = {
+  text(author.name)
+  super(author.insts.map(it => str(it)).join(","))
+  if author.corresponding {
+    footnote[
+      Corresponding author. Address: #author.address.
+      #if author.email != none {
+        [Email: #underline(author.email).]
+      }
+    ]
+  }
+  if author.cofirst == "thefirst" {
+    footnote("cofirst-author-mark")
+  } else if author.cofirst == "cofirst" {
+    locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
+  }
+}
+
+#let default-author-list(authors, template: default-author) = {
+  authors.map(it => template(it)).join(", ")
+}
+
+#let default-affiliation(insts) = {
+  show: block.with(width: 100%)
+  set par(leading: 0.4em)
+  for (ik, key) in insts.keys().enumerate() {
+    text(size: 0.8em, [#super([#(ik+1)]) #(insts.at(key))])
+    linebreak()
+  }
+}
+
+#let default-abstract(abstract, keywords) = {
+  // Abstract and keyword block
+  if abstract != [] {
+    stack(
+      dir: ttb,
+      spacing: 1em,
+      ..([
+        #heading([Abstract])
+        #abstract
+      ], if keywords.len() > 0 {
+        text(weight: "bold", [Key words: ])
+        text([#keywords.join([; ]).])
+      } else {none} )
+    )
+  }
+}
+
+#let default-bibliography(bib) = {
+  show bibliography: set text(1em)
+  show bibliography: set par(first-line-indent: 0em)
+  set bibliography(title: [References], style: "apa")
+  bib
+}
+
+#let default-body(body) = {
+  show heading.where(level: 1): it => block(above: 1.5em, below: 1.5em)[
+    #set pad(bottom: 2em, top: 1em)
+    #it.body
+  ]
+  set par(first-line-indent: 2em)
+  set footnote(numbering: "1")
+  body
+}
+```
 
 ## Example
 
