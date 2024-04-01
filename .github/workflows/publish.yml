@@ -68,4 +68,5 @@ jobs:
           git switch main
           git merge feat/${{ env.PACKAGE_NAME }}
           git branch -D feat/${{ env.PACKAGE_NAME }}
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
           git push origin main
