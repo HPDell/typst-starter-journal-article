@@ -48,11 +48,11 @@
   }
 }
 
-#let default-author-list(authors, template: default-author) = {
+#let default-author-list(authors, template) = {
   authors.map(it => template(it)).join(", ")
 }
 
-#let default-affiliation(insts) = {
+#let default-affiliations(insts) = {
   show: block.with(width: 100%)
   set par(leading: 0.4em)
   for (ik, key) in insts.keys().enumerate() {
@@ -166,7 +166,7 @@
     title: default-title,
     author-list: default-author-list,
     author: default-author,
-    affiliation: default-affiliation,
+    affiliations: default-affiliations,
     abstract: default-abstract,
     bibliography: default-bibliography,
     body: default-body,
@@ -257,9 +257,9 @@
     author_list.push(author_list_item)
   }
 
-  (template.author-list)(author_list, template: template.author)
+  (template.author-list)(author_list, template.author)
 
-  (template.affiliation)(affiliations)
+  (template.affiliations)(affiliations)
 
   (template.abstract)(abstract, keywords)
 
