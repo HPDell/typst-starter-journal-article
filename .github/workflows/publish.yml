@@ -51,7 +51,7 @@ jobs:
       - name: Get Change log
         run: |
           PKG_LAST_TAG=`git tag --list | tail -n 1`
-          git log ${PKG_LAST_TAG}.. --format="%s" --no-merges > log1.txt
+          git log ${PKG_LAST_TAG}..HEAD --format="%s" --no-merges > log1.txt
           cd packages
           git log -n 1 --format="%b" | grep -v '^\s*$' > ../log2.txt
           cd ..
