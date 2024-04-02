@@ -51,7 +51,8 @@ jobs:
       - name: Get Change log
         run: |
           PKG_LAST_TAG=`git tag --list | tail -n 1`
-          git log ${PKG_LAST_TAG}..HEAD --format="%s" --no-merges > log1.txt
+          PKG_LOG_RANGE=$([ -z "$PKG_LAST_TAG" ] && echo "" || echo "$PKG_LAST_TAG..HEAD" )
+          git log $PKG_LOG_RANGE --format="%s" --no-merges > log1.txt
           cd packages
           git log -n 1 --format="%b" | grep -v '^\s*$' > ../log2.txt
           cd ..
