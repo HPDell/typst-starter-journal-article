@@ -51,7 +51,8 @@ jobs:
       - name: Commit, merge and push
         working-directory: packages
         run: |
-          git switch -c feat/${{ env.PACKAGE_NAME }}
+          PKG_BRANCH="feat/${{ env.PACKAGE_NAME }}-$PKG_VERSION"
+          git switch -c $PKG_BRANCH
           mkdir -p packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION
           rsync -av \
             --exclude=.git \
@@ -61,10 +62,6 @@ jobs:
             --exclude=packages \
             ../ \
             packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
-          export PKG_COMMIT_MSG=`git log --format='%s' -n 1`
           git add -A
           git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION"
-          git switch main
-          git merge feat/${{ env.PACKAGE_NAME }}
-          git branch -D feat/${{ env.PACKAGE_NAME }}
-          git push origin main
+          git push origin $PKG_BRANCH
