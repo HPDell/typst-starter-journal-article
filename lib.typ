@@ -48,16 +48,24 @@
   }
 }
 
-#let default-author-list(authors, template) = {
-  authors.map(it => template(it)).join(", ")
+#let default-affiliation(id, address) = {
+  set text(size: 0.8em)
+  super([#(id+1)])
+  address
 }
 
-#let default-affiliations(insts) = {
-  show: block.with(width: 100%)
-  set par(leading: 0.4em)
-  for (ik, key) in insts.keys().enumerate() {
-    text(size: 0.8em, [#super([#(ik+1)]) #(insts.at(key))])
-    linebreak()
+#let default-author-info(authors, affiliations, template-author, template-affiliation) = {
+  {
+    show: block.with(width: 100%)
+    authors.map(it => template-author(it)).join(", ")
+  }
+  {
+    show: block.with(width: 100%)
+    set par(leading: 0.4em)
+    affiliations.keys().enumerate().map(it => {
+      let (ik, key) = it
+      template-affiliation(ik, affiliations.at(key))
+    }).join(linebreak())
   }
 }
 
@@ -164,9 +172,9 @@
 
   let template = (
     title: default-title,
-    author-list: default-author-list,
+    author-info: default-author-info,
     author: default-author,
-    affiliations: default-affiliations,
+    affiliation: default-affiliation,
     abstract: default-abstract,
     bibliography: default-bibliography,
     body: default-body,
@@ -257,9 +265,7 @@
     author_list.push(author_list_item)
   }
 
-  (template.author-list)(author_list, template.author)
-
-  (template.affiliations)(affiliations)
+  (template.author-info)(author_list, affiliations, template.author, template.affiliation)
 
   (template.abstract)(abstract, keywords)
 
