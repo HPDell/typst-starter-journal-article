@@ -54,17 +54,16 @@
   address
 }
 
-#let default-author-info(authors, affiliations, template-author, template-affiliation) = {
+#let default-author-info(authors, affiliations) = {
   {
     show: block.with(width: 100%)
-    authors.map(it => template-author(it)).join(", ")
+    authors.map(it => default-author(it)).join(", ")
   }
   {
     show: block.with(width: 100%)
     set par(leading: 0.4em)
-    affiliations.keys().enumerate().map(it => {
-      let (ik, key) = it
-      template-affiliation(ik, affiliations.at(key))
+    affiliations.keys().enumerate().map(((ik, key)) => {
+      default-affiliation(ik, affiliations.at(key))
     }).join(linebreak())
   }
 }
@@ -173,8 +172,6 @@
   let template = (
     title: default-title,
     author-info: default-author-info,
-    author: default-author,
-    affiliation: default-affiliation,
     abstract: default-abstract,
     bibliography: default-bibliography,
     body: default-body,
@@ -265,7 +262,7 @@
     author_list.push(author_list_item)
   }
 
-  (template.author-info)(author_list, affiliations, template.author, template.affiliation)
+  (template.author-info)(author_list, affiliations)
 
   (template.abstract)(abstract, keywords)
 
