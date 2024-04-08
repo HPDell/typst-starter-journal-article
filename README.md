@@ -39,13 +39,11 @@ Arguments:
 - `keywords`: The paper's keywords. Default: `[]`.
 - `bib`: The bibliography. Accept value from the built-in `bibliography` function. Default: `none`.
 - `template`: Templates for the following parts. Please see below for more informations
-  - `title`: how to show the title of this article.
-  - `author-list`: how to show the list of the authors.
-  - `author`: how to show each author's information.
-  - `affiliation`: how to show the affiliations.
-  - `abstract`: how to show the abstract and keywords.
-  - `bibliography`: how to show the bibliography.
-  - `body`: how to show main text.
+  - `title: (title) => {}`: how to show the title of this article.
+  - `author-info: (authors, affiliations) => {}`: how to show each author's information.
+  - `abstract: (abstract, keywords) => {}`: how to show the abstract and keywords.
+  - `bibliography: (bib) => {}`: how to show the bibliography.
+  - `body: (body) => {}`: how to show main text.
 
 ### `author-meta`
 
@@ -90,16 +88,23 @@ You can override any of the by setting the `template` argument in the `article()
   }
 }
 
-#let default-author-list(authors, template: default-author) = {
-  authors.map(it => template(it)).join(", ")
+#let default-affiliation(id, address) = {
+  set text(size: 0.8em)
+  super([#(id+1)])
+  address
 }
 
-#let default-affiliation(insts) = {
-  show: block.with(width: 100%)
-  set par(leading: 0.4em)
-  for (ik, key) in insts.keys().enumerate() {
-    text(size: 0.8em, [#super([#(ik+1)]) #(insts.at(key))])
-    linebreak()
+#let default-author-info(authors, affiliations) = {
+  {
+    show: block.with(width: 100%)
+    authors.map(it => default-author(it)).join(", ")
+  }
+  {
+    show: block.with(width: 100%)
+    set par(leading: 0.4em)
+    affiliations.keys().enumerate().map(((ik, key)) => {
+      default-affiliation(ik, affiliations.at(key))
+    }).join(linebreak())
   }
 }
 
@@ -168,6 +173,8 @@ See [the template](./template/main.typ) for full example.
 )
 ```
 
+![](./assets/basic.png)
+
 ### Custom title
 
 ```typst
@@ -202,3 +209,88 @@ See [the template](./template/main.typ) for full example.
   )
 )
 ```
+
+![](./assets/custom-title.png)
+
+### Custom author infomation
+
+```typst
+#show: article.with(
+  title: "Artile Title",
+  authors: (
+    "Author One": author-meta("UCL", email: "author.one@inst.ac.uk"),
+    "Author Two": author-meta("TSU")
+  ),
+  affiliations: (
+    "UCL": "UCL Centre for Advanced Spatial Analysis, First Floor, 90 Tottenham Court Road, London W1T 4TJ, United Kingdom",
+    "TSU": "Haidian  District, Beijing, 100084, P. R. China"
+  ),
+  abstract: [#lorem(20)],
+  keywords: ("Typst", "Template", "Journal Article"),
+  template: (
+    author-info: (authors, affiliations) => {
+      set align(center)
+      show: block.with(width: 100%, above: 2em, below: 2em)
+      let first_insts = authors.map(it => it.insts.at(0)).dedup()
+      stack(
+        dir: ttb,
+        spacing: 1em,
+        ..first_insts.map(inst_id => {
+          let inst_authors = authors.filter(it => it.insts.at(0) == inst_id)
+          stack(
+            dir: ttb,
+            spacing: 1em,
+            {
+              inst_authors.map(it => it.name).join(", ")
+            },
+            {
+              set text(0.8em, style: "italic")
+              affiliations.values().at(inst_id)
+            }
+          )
+        })
+      )
+    }
+  )
+)
+```
+
+![](./assets/custom-author-info.png)
+
+### Custom abstract
+
+```typst
+#show: article.with(
+  title: "Artile Title",
+  authors: (
+    "Author One": author-meta("UCL", email: "author.one@inst.ac.uk"),
+    "Author Two": author-meta("TSU")
+  ),
+  affiliations: (
+    "UCL": "UCL Centre for Advanced Spatial Analysis, First Floor, 90 Tottenham Court Road, London W1T 4TJ, United Kingdom",
+    "TSU": "Haidian  District, Beijing, 100084, P. R. China"
+  ),
+  abstract: [#lorem(20)],
+  keywords: ("Typst", "Template", "Journal Article"),
+  template: (
+    abstract: (abstract, keywords) => {
+      show: block.with(
+        width: 100%,
+        stroke: (y: 0.5pt + black),
+        inset: (y: 1em)
+      )
+      show heading: set text(size: 12pt)
+      heading(numbering: none, outlined: false, bookmarked: false, [Abstract])
+      par(abstract)
+      stack(
+        dir: ltr,
+        spacing: 4pt,
+        strong([Keywords]),
+        keywords.join(", ")
+      )
+    }
+  )
+)
+```
+
+![](./assets/custom-abstract.png)
