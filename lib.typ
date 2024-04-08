@@ -32,7 +32,7 @@
 
 #let default-author(author) = {
   text(author.name)
-  super(author.insts.map(it => str(it)).join(","))
+  super(author.insts.map(it => str(it+1)).join(","))
   if author.corresponding {
     footnote[
       Corresponding author. Address: #author.address.
@@ -59,10 +59,11 @@
     show: block.with(width: 100%)
     authors.map(it => default-author(it)).join(", ")
   }
+  let used_affiliations = authors.map(it => it.insts).flatten().dedup().map(it => affiliations.keys().at(it - 1))
   {
     show: block.with(width: 100%)
     set par(leading: 0.4em)
-    affiliations.keys().enumerate().map(((ik, key)) => {
+    used_affiliations.enumerate().map(((ik, key)) => {
       default-affiliation(ik, affiliations.at(key))
     }).join(linebreak())
   }
@@ -224,7 +225,7 @@
       // record the first affiliation as the primary affiliation,
       au_inst_primary = affiliations.at(au_inst_id.first())
       // and convert each affiliation's label to index
-      let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id) + 1)
+      let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id))
       // Output affiliation
       author_list_item.insert("insts", au_inst_index)
     } else if (type(au_inst_id) == str) {
@@ -232,7 +233,7 @@
       // set this as the primary affiliation
       au_inst_primary = affiliations.at(au_inst_id)
       // convert the affiliation's label to index
-      let au_inst_index = inst_keys.position(key => key == au_inst_id) + 1
+      let au_inst_index = inst_keys.position(key => key == au_inst_id)
       // Output affiliation
       author_list_item.insert("insts", (au_inst_index,))
     }
