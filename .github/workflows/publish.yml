@@ -48,16 +48,6 @@ jobs:
         run: |
           pip install toml-cli
           echo "PKG_VERSION=`toml get --toml-path typst.toml package.version`" >> "$GITHUB_ENV"
-      - name: Get Change log
-        run: |
-          PKG_LAST_TAG=`git tag --list | tail -n 1`
-          PKG_LOG_RANGE=$([ -z "$PKG_LAST_TAG" ] && echo "" || echo "$PKG_LAST_TAG..HEAD" )
-          git log $PKG_LOG_RANGE --format="%s" --no-merges > log1.txt
-          cd packages
-          git log -n 1 --format="%b" | grep -v '^\s*$' > ../log2.txt
-          cd ..
-          touch changes.txt
-          diff log1.txt log2.txt | patch changes.txt
       - name: Commit, merge and push
         working-directory: packages
         run: |
@@ -73,5 +63,5 @@ jobs:
             ../ \
             packages/preview/${{ env.PACKAGE_NAME }}/$PKG_VERSION/
           git add -A
-          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION\n\n`echo changes.txt`"
+          git commit -m "${{ env.PACKAGE_NAME }}:$PKG_VERSION"
           git push origin $PKG_BRANCH
