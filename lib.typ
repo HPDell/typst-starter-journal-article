@@ -59,7 +59,7 @@
     show: block.with(width: 100%)
     authors.map(it => default-author(it)).join(", ")
   }
-  let used_affiliations = authors.map(it => it.insts).flatten().dedup().map(it => affiliations.keys().at(it - 1))
+  let used_affiliations = authors.map(it => it.insts).flatten().dedup().map(it => affiliations.keys().at(it))
   {
     show: block.with(width: 100%)
     set par(leading: 0.4em)
