@@ -37,7 +37,7 @@
     footnote[
       Corresponding author. Address: #author.address.
       #if author.email != none {
-        [Email: #underline(author.email).]
+        [Email: #underline(author.email)]
       }
     ]
   }
