@@ -163,10 +163,18 @@
 ) = {
   // Set document properties
   set document(title: title, author: authors.keys())
-  show footnote.entry: it => [
-    #set par(hanging-indent: 0.54em)
-    #it.note #it.note.body
-  ]
+  show footnote.entry: it => {
+    let loc = it.note.location()
+    stack(
+      dir: ltr,
+      spacing: 0.2em,
+      box(width: it.indent, {
+        set align(right)
+        super(baseline: -0.2em, numbering(it.note.numbering, ..counter(footnote).at(loc)))
+      }),
+      it.note.body
+    )
+  }
   set footnote(numbering: "*")
   show "cofirst-author-mark": [These authors contributed equally to this work.]
 
