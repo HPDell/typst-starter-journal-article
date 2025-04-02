@@ -41,11 +41,11 @@
       }
     ]
   }
-  if author.cofirst == "thefirst" {
-    footnote("cofirst-author-mark")
-  } else if author.cofirst == "cofirst" {
-    locate(loc => query(footnote.where(body: [cofirst-author-mark]), loc).last())
-  }
+  if author.cofirst == "thefirst" [
+    #footnote("cofirst-author-mark") <fnt:cofirst-author>
+  ] else if author.cofirst == "cofirst" [
+    #footnote(<fnt:cofirst-author>)
+  ]
 }
 
 #let default-affiliation(id, address) = {
