@@ -282,7 +282,8 @@
 
 #let appendix(
   body
-) = {
+) = context {
+  counter(heading).update(0)
   set heading(numbering: "A.1.", supplement: "Appendix")
   show heading: it => context block(above: 1em, below: 1em, {
     if it.level == 1 {
