@@ -84,14 +84,12 @@ In @app:demo, #lorem(20)
     rows: 3,
     ..((lorem(2),) *9)
   ),
-  caption: [A table caption.],
-  placement: top
+  caption: [A table caption.]
 ) <tbl:demo-app>
 
 #figure(
   rect([Hello]),
-  caption: [A figure caption.],
-  placement: top
+  caption: [A figure caption.]
 ) <fig:demo-app>
 
 = #lorem(3)
@@ -100,6 +98,5 @@ In @app:demo, #lorem(20)
 
 #figure(
   rect([Hello]),
-  caption: [A figure caption.],
-  placement: top
+  caption: [A figure caption.]
 ) <fig:demo-app2>

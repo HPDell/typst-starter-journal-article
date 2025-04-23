@@ -98,6 +98,7 @@
 #let default-body(body) = {
   show heading.where(level: 1): set block(above: 1em, below: 1em)
   set par(first-line-indent: 2em)
+  set figure(placement: top)
   set figure.caption(separator: ". ")
   show figure.where(kind: table): set figure.caption(position: top)
   set footnote(numbering: "1")
