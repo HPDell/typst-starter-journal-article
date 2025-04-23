@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.4.0": article, author-meta, appendix, default-body
+#import "@preview/starter-journal-article:0.4.0": article, author-meta, appendix, suffix
 
 #let affiliations = (
   "UCL": "UCL Centre for Advanced Spatial Analysis, First Floor, 90 Tottenham Court Road, London W1T 4TJ, United Kingdom",
@@ -36,6 +36,7 @@
   )
 )
 
+#set heading(numbering: "1.")
 
 = Section
 
@@ -62,6 +63,16 @@ Moran's Indicator @Moran_1950, #lorem(20)
 ) <fig:demo>
 
 In @app:demo, #lorem(20)
+
+#show: suffix
+
+= Acknowledgements
+
+#lorem(20)
+
+= Fundings
+
+#lorem(20)
 
 #bibliography(
   bytes("@article{Moran_1950, title={Notes on Continuous Stochastic Phenomena}, volume={37}, ISSN={0006-3444}, DOI={10.2307/2332142}, number={1/2}, journal={Biometrika}, publisher={[Oxford University Press, Biometrika Trust]}, author={Moran, P. A. P.}, year={1950}, pages={17–23} }"),

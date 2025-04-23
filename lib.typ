@@ -281,6 +281,13 @@
   body
 }
 
+#let suffix(
+  body
+) = {
+  set heading(numbering: none)
+  body
+}
+
 #let appendix(
   body
 ) = context {
