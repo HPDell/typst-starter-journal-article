@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.4.0": article, author-meta
+#import "@preview/starter-journal-article:0.4.0": article, author-meta, appendix, default-body
 
 #let affiliations = (
   "UCL": "UCL Centre for Advanced Spatial Analysis, First Floor, 90 Tottenham Court Road, London W1T 4TJ, United Kingdom",
@@ -41,3 +41,54 @@
 
 #lorem(20)
 #footnote[#lorem(30)]
+#lorem(20)
+@fig:demo and @tbl:demo #lorem(10)
+
+#figure(
+  table(
+    columns: 3,
+    rows: 3,
+    ..((lorem(2),) *9)
+  ),
+  caption: [A table caption.]
+) <tbl:demo>
+
+#figure(
+  rect([Hello]),
+  caption: [A figure caption.],
+) <fig:demo>
+
+In @app:demo, #lorem(20)
+
+#show: appendix
+
+= #lorem(5) <app:demo>
+
+#lorem(10)
+
+== #lorem(2)
+
+#lorem(20) @tbl:demo-app and @fig:demo-app #lorem(10)
+
+#figure(
+  table(
+    columns: 3,
+    rows: 3,
+    ..((lorem(2),) *9)
+  ),
+  caption: [A table caption.]
+) <tbl:demo-app>
+
+#figure(
+  rect([Hello]),
+  caption: [A figure caption.],
+) <fig:demo-app>
+
+= #lorem(3)
+
+#lorem(10)
+
+#figure(
+  rect([Hello]),
+  caption: [A figure caption.],
+) <fig:demo-app2>

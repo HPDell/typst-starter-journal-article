@@ -95,10 +95,7 @@
 }
 
 #let default-body(body) = {
-  show heading.where(level: 1): it => block(above: 1.5em, below: 1.5em)[
-    #set pad(bottom: 2em, top: 1em)
-    #it.body
-  ]
+  show heading.where(level: 1): set block(above: 1em, below: 1em)
   set par(first-line-indent: 2em)
   set footnote(numbering: "1")
   body
@@ -278,6 +275,8 @@
 
   counter(footnote).update(0)
 
+  set figure.caption(separator: ". ")
+
   show: template.body
   
   body
@@ -286,4 +285,23 @@
   if bib != none {
     (template.bibliography)(bib)
   }
+}
+
+#let appendix(
+  body
+) = {
+  set heading(numbering: "A.1.", supplement: "Appendix")
+  show heading: it => context block(above: 1em, below: 1em, {
+    if it.level == 1 {
+      "Appendix " + counter(heading).display(it.numbering)
+    } else {
+      counter(heading).display(it.numbering)
+    }
+    h(4pt)
+    it.body
+  })
+  show figure: set figure(numbering: (..nums) => context {
+    (counter(heading.where(level: 1)).display("A"), ..nums.pos().map(str)).join(".")
+  })
+  body
 }
