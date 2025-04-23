@@ -32,7 +32,7 @@
 
 #let default-author(author) = {
   text(author.name)
-  super(author.insts.map(it => str(it+1)).join(","))
+  super(author.insts.map(it => str.from-unicode(97 + it)).join(","))
   if author.corresponding {
     footnote[
       Corresponding author. Address: #author.address.
@@ -50,7 +50,8 @@
 
 #let default-affiliation(id, address) = {
   set text(size: 0.8em)
-  super([#(id+1)])
+  super(str.from-unicode(97 + id))
+  h(1pt)
   address
 }
 
@@ -274,6 +275,8 @@
   (template.author-info)(author_list, affiliations)
 
   (template.abstract)(abstract, keywords)
+
+  counter(footnote).update(0)
 
   show: template.body
   

@@ -40,3 +40,4 @@
 = Section
 
 #lorem(20)
+#footnote[#lorem(30)]
