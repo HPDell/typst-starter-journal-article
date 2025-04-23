@@ -43,6 +43,7 @@
 #footnote[#lorem(30)]
 #lorem(20)
 @fig:demo and @tbl:demo #lorem(10)
+Moran's Indicator @Moran_1950, #lorem(20)
 
 #figure(
   table(
@@ -50,15 +51,22 @@
     rows: 3,
     ..((lorem(2),) *9)
   ),
-  caption: [A table caption.]
+  caption: [A table caption.],
+  placement: bottom
 ) <tbl:demo>
 
 #figure(
   rect([Hello]),
   caption: [A figure caption.],
+  placement: bottom
 ) <fig:demo>
 
 In @app:demo, #lorem(20)
+
+#bibliography(
+  bytes("@article{Moran_1950, title={Notes on Continuous Stochastic Phenomena}, volume={37}, ISSN={0006-3444}, DOI={10.2307/2332142}, number={1/2}, journal={Biometrika}, publisher={[Oxford University Press, Biometrika Trust]}, author={Moran, P. A. P.}, year={1950}, pages={17–23} }"),
+  style: "apa"
+)
 
 #show: appendix
 
@@ -76,12 +84,14 @@ In @app:demo, #lorem(20)
     rows: 3,
     ..((lorem(2),) *9)
   ),
-  caption: [A table caption.]
+  caption: [A table caption.],
+  placement: top
 ) <tbl:demo-app>
 
 #figure(
   rect([Hello]),
   caption: [A figure caption.],
+  placement: top
 ) <fig:demo-app>
 
 = #lorem(3)
@@ -91,4 +101,5 @@ In @app:demo, #lorem(20)
 #figure(
   rect([Hello]),
   caption: [A figure caption.],
+  placement: top
 ) <fig:demo-app2>

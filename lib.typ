@@ -98,6 +98,8 @@
 #let default-body(body) = {
   show heading.where(level: 1): set block(above: 1em, below: 1em)
   set par(first-line-indent: 2em)
+  set figure.caption(separator: ". ")
+  show figure.where(kind: table): set figure.caption(position: top)
   set footnote(numbering: "1")
   body
 }
@@ -142,9 +144,6 @@
 
   // The paper's keywords.
   keywords: (),
-
-  // The bibliography. Accept value from the built-in `bibliography` function.
-  bib: none,
 
   // Templates for the following parts:
   // - `title`: how to show the title of this article.
@@ -276,16 +275,9 @@
 
   counter(footnote).update(0)
 
-  set figure.caption(separator: ". ")
-
   show: template.body
   
   body
-
-  // Display bibliography.
-  if bib != none {
-    (template.bibliography)(bib)
-  }
 }
 
 #let appendix(
