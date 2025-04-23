@@ -85,6 +85,7 @@
       } else {none} )
     )
   }
+  v(1em)
 }
 
 #let default-bibliography(bib) = {
