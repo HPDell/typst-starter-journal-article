@@ -294,3 +294,18 @@ See [the template](./template/main.typ) for full example.
 ```
 
 ![](./assets/custom-abstract.png)
+
+## Changelog
+
+### 0.4.0
+
+Breaking changes:
+
+- Affiliation labels are now shown with alphabetic characters instead of numbers.
+- Parameter `bib` is removed. Users should use the built-in `bibliography` function to create a bibliography in the right place.
+
+New features:
+
+- A `appendix` function is added to show contents as appendices.
+- A `suffix` function is added to show additional contents before the appendix. This is useful when heading numbers are shown but need to be hide for the "suffix" part.
+- A `booktab` function is added to create three-line tables.
