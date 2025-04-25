@@ -57,6 +57,53 @@ Arguments:
 - `address`: The address of the author. Default: `none`.
 - `cofirst`: Whether the author is the co-first author. Default: `false`.
 
+### `appendix`
+
+A helper to show contents as appendices.
+
+- Heading numbers are shown in capital letters with a prefix "Appendix".
+- Appendix numbers are prepended to figure (and table, etc.) numbers.
+
+Usage:
+
+```typst
+#show: appendix
+```
+
+### `suffix`
+
+A helper to show contents after the main text but before the appendix.
+The only behavior of this function is to hide the heading numbers.
+
+Usage:
+
+```typst
+#show: suffix
+```
+
+### `booktab`
+
+A helper to create three-line tables.
+This function is a wrapper of the built-in `table` function.
+It adds a top line and a bottom line to the table,
+and a middle line under the first row by default.
+
+Arguments:
+
+- `..args`: Capture the positioned arguments as the table contents. Mandatory.
+- `top-bottom`: The stroke of the top and bottom lines. Default: `1pt`.
+- `mid`: The stroke of the middle line. Default: `0.5pt`.
+
+Usage:
+
+```typst
+#booktab(
+  columns: 3,
+  rows: 3,
+  ..((lorem(2),) *9)
+)
+```
+
 ## Default templates
 
 The following code shows how the default templates are defined.
