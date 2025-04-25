@@ -307,3 +307,18 @@
   })
   body
 }
+
+#let booktab(
+  ..args,
+  top-bottom: 1pt,
+  mid: 0.5pt
+) = {
+  show table.cell.where(y: 0): strong
+  table(
+    stroke: (x, y) => (
+      top: if y == 0 { top-bottom } else if y == 1 { mid } else { 0pt },
+    ),
+    ..args,
+    table.hline(stroke: top-bottom)
+  )
+}

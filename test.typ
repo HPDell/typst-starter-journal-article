@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.4.0": article, author-meta, appendix, suffix
+#import "@preview/starter-journal-article:0.4.0": article, author-meta, appendix, suffix, booktab
 
 #let affiliations = (
   "UCL": "UCL Centre for Advanced Spatial Analysis, First Floor, 90 Tottenham Court Road, London W1T 4TJ, United Kingdom",
@@ -47,7 +47,7 @@
 Moran's Indicator @Moran_1950, #lorem(20)
 
 #figure(
-  table(
+  booktab(
     columns: 3,
     rows: 3,
     ..((lorem(2),) *9)
