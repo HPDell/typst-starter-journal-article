@@ -356,3 +356,9 @@ New features:
 - A `appendix` function is added to show contents as appendices.
 - A `suffix` function is added to show additional contents before the appendix. This is useful when heading numbers are shown but need to be hide for the "suffix" part.
 - A `booktab` function is added to create three-line tables.
+
+Improvements:
+
+- A 1em space is added beneath the abstract and keywords.
+- The `placement` argument of the `figure` function is set to `top` by default.
+- The separator between figure labels and captions is changed to a period followed by a space.
