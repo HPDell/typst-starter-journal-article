@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.4.0": article, author-meta
+#import "@preview/starter-journal-article:0.4.1": article, author-meta
 
 #set page(margin: 12pt, width: 6in, height: 5in)
 

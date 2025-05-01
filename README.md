@@ -344,7 +344,7 @@ See [the template](./template/main.typ) for full example.
 
 ## Changelog
 
-### 0.4.0
+### 0.4.1
 
 Breaking changes:
 
