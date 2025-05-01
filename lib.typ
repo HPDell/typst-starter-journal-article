@@ -1,3 +1,17 @@
+#let i18n = yaml("i18n.yaml")
+#let gettext(key) = context {
+  let lookup = i18n.at(text.lang, default: i18n.en)
+  let keys = key.split(".")
+  for k in keys {
+    if lookup.keys().contains(k) {
+      lookup = lookup.at(k)
+    } else {
+      panic("Key not found: " + key)
+    }
+  }
+  lookup
+}
+
 #let author-meta(
   ..affiliation,
   email: none,
@@ -31,13 +45,14 @@
 }
 
 #let default-author(author) = {
-  text(author.name)
-  super(author.insts.map(it => str.from-unicode(97 + it)).join(","))
+  set text(cjk-latin-spacing: none)
+  [#author.name#super(author.insts.map(it => numbering("a", it + 1)).join(","))]
   if author.corresponding {
     footnote[
-      Corresponding author. Address: #author.address.
+      #gettext("corresponding.note")
+      #gettext("corresponding.address")#author.address#gettext("period")
       #if author.email != none {
-        [Email: #underline(author.email)]
+        [#gettext("corresponding.email")#underline(author.email)]
       }
     ]
   }
@@ -70,18 +85,18 @@
   }
 }
 
-#let default-abstract(abstract, keywords) = {
+#let default-abstract(abstract, keywords) = context {
   // Abstract and keyword block
   if abstract != [] {
     stack(
       dir: ttb,
       spacing: 1em,
       ..([
-        #heading([Abstract])
+        #heading(gettext("abstract"))
         #abstract
       ], if keywords.len() > 0 {
-        text(weight: "bold", [Key words: ])
-        text([#keywords.join([; ]).])
+        text(weight: "bold", gettext("keywords"))
+        text([#keywords.join(gettext("semicolon")).])
       } else {none} )
     )
   }
@@ -175,7 +190,7 @@
     )
   }
   set footnote(numbering: "*")
-  show "cofirst-author-mark": [These authors contributed equally to this work.]
+  show "cofirst-author-mark": gettext("cofirst")
 
   let template = (
     title: default-title,
@@ -295,7 +310,7 @@
   set heading(numbering: "A.1.", supplement: "Appendix")
   show heading: it => context block(above: 1em, below: 1em, {
     if it.level == 1 {
-      "Appendix " + counter(heading).display(it.numbering)
+      gettext("appendix") + " " + counter(heading).display(it.numbering)
     } else {
       counter(heading).display(it.numbering)
     }

@@ -1,0 +1,22 @@
+en:
+  abstract: "Abstract"
+  keywords: "Key words: "
+  appendix: "Appendix"
+  corresponding:
+    note: "Corresponding author."
+    address: "Address: "
+    email: "Email: "
+  cofirst: "These authors contributed equally to this work."
+  period: ". "
+  semicolon: "; "
+zh:
+  abstract: "摘要"
+  keywords: "关键词："
+  appendix: "附录"
+  corresponding:
+    note: "通讯作者。"
+    address: "地址："
+    email: "电子邮箱："
+  cofirst: "共同第一作者。"
+  period: "。"
+  semicolon: "；"
