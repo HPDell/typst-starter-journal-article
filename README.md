@@ -57,6 +57,53 @@ Arguments:
 - `address`: The address of the author. Default: `none`.
 - `cofirst`: Whether the author is the co-first author. Default: `false`.
 
+### `appendix`
+
+A helper to show contents as appendices.
+
+- Heading numbers are shown in capital letters with a prefix "Appendix".
+- Appendix numbers are prepended to figure (and table, etc.) numbers.
+
+Usage:
+
+```typst
+#show: appendix
+```
+
+### `suffix`
+
+A helper to show contents after the main text but before the appendix.
+The only behavior of this function is to hide the heading numbers.
+
+Usage:
+
+```typst
+#show: suffix
+```
+
+### `booktab`
+
+A helper to create three-line tables.
+This function is a wrapper of the built-in `table` function.
+It adds a top line and a bottom line to the table,
+and a middle line under the first row by default.
+
+Arguments:
+
+- `..args`: Capture the positioned arguments as the table contents. Mandatory.
+- `top-bottom`: The stroke of the top and bottom lines. Default: `1pt`.
+- `mid`: The stroke of the middle line. Default: `0.5pt`.
+
+Usage:
+
+```typst
+#booktab(
+  columns: 3,
+  rows: 3,
+  ..((lorem(2),) *9)
+)
+```
+
 ## Default templates
 
 The following code shows how the default templates are defined.
@@ -294,3 +341,24 @@ See [the template](./template/main.typ) for full example.
 ```
 
 ![](./assets/custom-abstract.png)
+
+## Changelog
+
+### 0.4.0
+
+Breaking changes:
+
+- Affiliation labels are now shown with alphabetic characters instead of numbers.
+- Parameter `bib` is removed. Users should use the built-in `bibliography` function to create a bibliography in the right place.
+
+New features:
+
+- A `appendix` function is added to show contents as appendices.
+- A `suffix` function is added to show additional contents before the appendix. This is useful when heading numbers are shown but need to be hide for the "suffix" part.
+- A `booktab` function is added to create three-line tables.
+
+Improvements:
+
+- A 1em space is added beneath the abstract and keywords.
+- The `placement` argument of the `figure` function is set to `top` by default.
+- The separator between figure labels and captions is changed to a period followed by a space.

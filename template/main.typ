@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.3.3": article, author-meta
+#import "@preview/starter-journal-article:0.4.0": article, author-meta
 
 #show: article.with(
   title: "Article Title",
@@ -20,8 +20,7 @@
     "TSU": "Haidian  District, Beijing, 100084, P. R. China"
   ),
   abstract: [#lorem(100)],
-  keywords: ("Typst", "Template", "Journal Article"),
-  bib: bibliography("./ref.bib")
+  keywords: ("Typst", "Template", "Journal Article")
 )
 
 = Section
@@ -35,3 +34,5 @@
 === Subsubsection
 
 #lorem(80)
+
+#bibliography("./ref.bib")
