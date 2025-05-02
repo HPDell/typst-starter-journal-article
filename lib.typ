@@ -110,9 +110,9 @@
   bib
 }
 
-#let default-body(body) = {
+#let default-body(body) = context {
   show heading.where(level: 1): set block(above: 1em, below: 1em)
-  set par(first-line-indent: 2em)
+  set par(first-line-indent: (amount: 2em, all: text.lang == "zh"))
   set figure(placement: top)
   set figure.caption(separator: ". ")
   show figure.where(kind: table): set figure.caption(position: top)
