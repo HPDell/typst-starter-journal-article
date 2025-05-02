@@ -92,7 +92,7 @@
       dir: ttb,
       spacing: 1em,
       ..([
-        #heading(gettext("abstract"))
+        #heading(gettext("abstract"), numbering: none, outlined: false)
         #abstract
       ], if keywords.len() > 0 {
         text(weight: "bold", gettext("keywords"))
