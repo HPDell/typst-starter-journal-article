@@ -1,5 +1,6 @@
 #import "@preview/starter-journal-article:0.4.1": article, author-meta, appendix, suffix, booktab
 #import "@preview/cjk-unbreak:0.1.0": remove-cjk-break-space
+#import "@preview/kouhu:0.2.0": kouhu
 
 #show: remove-cjk-break-space
 
@@ -30,7 +31,7 @@
     )
   ),
   affiliations: affiliations,
-  abstract: [#lorem(100)],
+  abstract: [#kouhu(indices: range(1, 2))],
   keywords: ("Typst", "模板", "期刊论文"),
   template: (
     title: (title) => {
@@ -45,29 +46,29 @@
 
 = 简介
 
-#lorem(20)
-#footnote[#lorem(30)]
-#lorem(20)
-@fig:demo and @tbl:demo #lorem(10)
-Moran's Indicator @Moran_1950, #lorem(20)
+#kouhu(indices: range(2, 3), length: 100)
+#footnote[#kouhu(length: 30)。]
+#kouhu(indices: range(3, 4), length: 100)
+@fig:demo 和@tbl:demo #kouhu(indices: range(4, 5), length: 20)
+莫兰指数@Moran_1950, #kouhu(indices: range(5, 6), length: 20)
 
 #figure(
   booktab(
     columns: 3,
     rows: 3,
-    ..((lorem(2),) *9)
+    ..((kouhu(length: 4),) *9)
   ),
-  caption: [A table caption.],
+  caption: [表题注。],
   placement: bottom
 ) <tbl:demo>
 
 #figure(
-  rect([Hello]),
-  caption: [A figure caption.],
+  rect([图片内容]),
+  caption: [图题注。],
   placement: bottom
 ) <fig:demo>
 
-In @app:demo, #lorem(20)
+在@app:demo 中，#kouhu(length: 200)。
 
 #show: suffix
 
@@ -94,14 +95,14 @@ In @app:demo, #lorem(20)
   table(
     columns: 3,
     rows: 3,
-    ..((lorem(2),) *9)
+    ..((kouhu(length: 4),) *9)
   ),
-  caption: [A table caption.]
+  caption: [表题注。]
 ) <tbl:demo-app>
 
 #figure(
-  rect([Hello]),
-  caption: [A figure caption.]
+  rect([图片内容]),
+  caption: [图题注。]
 ) <fig:demo-app>
 
 = #lorem(3)
@@ -109,6 +110,6 @@ In @app:demo, #lorem(20)
 #lorem(10)
 
 #figure(
-  rect([Hello]),
-  caption: [A figure caption.]
+  rect([图片内容]),
+  caption: [图题注。]
 ) <fig:demo-app2>
