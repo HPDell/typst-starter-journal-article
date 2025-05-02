@@ -1,16 +1,5 @@
-#let i18n = yaml("i18n.yaml")
-#let gettext(key) = context {
-  let lookup = i18n.at(text.lang, default: i18n.en)
-  let keys = key.split(".")
-  for k in keys {
-    if lookup.keys().contains(k) {
-      lookup = lookup.at(k)
-    } else {
-      panic("Key not found: " + key)
-    }
-  }
-  lookup
-}
+#import "@preview/oxifmt:0.2.1": strfmt
+#import "lang/index.typ": lang
 
 #let author-meta(
   ..affiliation,
@@ -44,20 +33,21 @@
   title
 }
 
-#let default-author(author) = {
+#let default-author(author) = context {
+  let (gettext, locale) = lang(text.lang)
   set text(cjk-latin-spacing: none)
   [#author.name#super(author.insts.map(it => numbering("a", it + 1)).join(","))]
   if author.corresponding {
     footnote[
       #gettext("corresponding.note")
-      #gettext("corresponding.address")#author.address#gettext("period")
+      #strfmt(gettext("corresponding.address"), address: author.address)
       #if author.email != none {
-        [#gettext("corresponding.email")#underline(author.email)]
+        [#strfmt(gettext("corresponding.email"), email: author.email)]
       }
     ]
   }
   if author.cofirst == "thefirst" [
-    #footnote("cofirst-author-mark") <fnt:cofirst-author>
+    #footnote(gettext("cofirst")) <fnt:cofirst-author>
   ] else if author.cofirst == "cofirst" [
     #footnote(<fnt:cofirst-author>)
   ]
@@ -86,6 +76,7 @@
 }
 
 #let default-abstract(abstract, keywords) = context {
+  let (gettext, locale) = lang(text.lang)
   // Abstract and keyword block
   if abstract != [] {
     stack(
@@ -95,8 +86,8 @@
         #heading(gettext("abstract"), numbering: none, outlined: false)
         #abstract
       ], if keywords.len() > 0 {
-        text(weight: "bold", gettext("keywords"))
-        text([#keywords.join(gettext("semicolon")).])
+        strong(gettext("keywords.title"))
+        strfmt(gettext("keywords.text"), keywords: keywords.join(gettext("keywords.sep")))
       } else {none} )
     )
   }
@@ -190,7 +181,6 @@
     )
   }
   set footnote(numbering: "*")
-  show "cofirst-author-mark": gettext("cofirst")
 
   let template = (
     title: default-title,
@@ -306,8 +296,9 @@
 #let appendix(
   body
 ) = context {
+  let (gettext, locale) = lang(text.lang)
   counter(heading).update(0)
-  set heading(numbering: "A.1.", supplement: "Appendix")
+  set heading(numbering: "A.1.", supplement: gettext("appendix"))
   show heading: it => context block(above: 1em, below: 1em, {
     if it.level == 1 {
       gettext("appendix") + " " + counter(heading).display(it.numbering)

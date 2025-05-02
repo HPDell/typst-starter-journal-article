@@ -1,0 +1,8 @@
+en:
+  par:
+    first-line-indent: 2em
+    all: false
+zh:
+  par:
+    first-line-indent: 2em
+    all: true
