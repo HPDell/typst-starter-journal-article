@@ -342,7 +342,42 @@ See [the template](./template/main.typ) for full example.
 
 ![](./assets/custom-abstract.png)
 
+## Internationalisation and Localisation
+
+> [!IMPORTANT]
+> This feature is introduced since version `0.5.0`.
+> The default language is still English.
+
+For different language users, default templates vary when they set the document's language by:
+
+```typst
+#set text(lang: "xx")
+```
+
+Supported languages:
+
+- [x] English (`en`)
+- [x] Chinese (`zh`)
+
+Users can still customise the templates.
+
+Example:
+
+![Default Chinese template](./assets/basic-zh.png)
+
 ## Changelog
+
+### 0.5.0
+
+New features:
+
+- Add support for internationalisation and localisation for the following languages:
+  - English (`en`)
+  - Chinese (`zh`)
+
+Improvements:
+
+- Fix: show "Abstract" with no numbering and not outlined
 
 ### 0.4.0
 
