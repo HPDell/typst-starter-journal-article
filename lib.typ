@@ -1,3 +1,6 @@
+#import "lang/index.typ": lang-templates
+#import "lang/i18n.typ": i18n
+
 #let author-meta(
   ..affiliation,
   email: none,
@@ -21,88 +24,6 @@
     info.insert("cofirst", cofirst)
   }
   info
-}
-
-#let default-title(title) = {
-  show: block.with(width: 100%)
-  set align(center)
-  set text(size: 1.75em, weight: "bold")
-  title
-}
-
-#let default-author(author) = {
-  text(author.name)
-  super(author.insts.map(it => str.from-unicode(97 + it)).join(","))
-  if author.corresponding {
-    footnote[
-      Corresponding author. Address: #author.address.
-      #if author.email != none {
-        [Email: #underline(author.email)]
-      }
-    ]
-  }
-  if author.cofirst == "thefirst" [
-    #footnote("cofirst-author-mark") <fnt:cofirst-author>
-  ] else if author.cofirst == "cofirst" [
-    #footnote(<fnt:cofirst-author>)
-  ]
-}
-
-#let default-affiliation(id, address) = {
-  set text(size: 0.8em)
-  super(str.from-unicode(97 + id))
-  h(1pt)
-  address
-}
-
-#let default-author-info(authors, affiliations) = {
-  {
-    show: block.with(width: 100%)
-    authors.map(it => default-author(it)).join(", ")
-  }
-  let used_affiliations = authors.map(it => it.insts).flatten().dedup().map(it => affiliations.keys().at(it))
-  {
-    show: block.with(width: 100%)
-    set par(leading: 0.4em)
-    used_affiliations.enumerate().map(((ik, key)) => {
-      default-affiliation(ik, affiliations.at(key))
-    }).join(linebreak())
-  }
-}
-
-#let default-abstract(abstract, keywords) = {
-  // Abstract and keyword block
-  if abstract != [] {
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      ..([
-        #heading([Abstract])
-        #abstract
-      ], if keywords.len() > 0 {
-        text(weight: "bold", [Key words: ])
-        text([#keywords.join([; ]).])
-      } else {none} )
-    )
-  }
-  v(1em)
-}
-
-#let default-bibliography(bib) = {
-  show bibliography: set text(1em)
-  show bibliography: set par(first-line-indent: 0em)
-  set bibliography(title: [References], style: "apa")
-  bib
-}
-
-#let default-body(body) = {
-  show heading.where(level: 1): set block(above: 1em, below: 1em)
-  set par(first-line-indent: 2em)
-  set figure(placement: top)
-  set figure.caption(separator: ". ")
-  show figure.where(kind: table): set figure.caption(position: top)
-  set footnote(numbering: "1")
-  body
 }
 
 #let article(
@@ -152,14 +73,13 @@
   // - `author`: how to show each author's information.
   // - `affiliation`: how to show the affiliations.
   // - `abstract`: how to show the abstract and keywords.
-  // - `bibliography`: how to show the bibliography.
   // - `body`: how to show main text.
   // Please see below for more infomation.
   template: (:),
 
   // Paper's content
   body
-) = {
+) = context {
   // Set document properties
   set document(title: title, author: authors.keys())
   show footnote.entry: it => {
@@ -175,13 +95,17 @@
     )
   }
   set footnote(numbering: "*")
-  show "cofirst-author-mark": [These authors contributed equally to this work.]
 
+  let (
+    default-title,
+    default-author-info,
+    default-abstract,
+    default-body,
+  ) = lang-templates.at(text.lang, default: lang-templates.en)
   let template = (
     title: default-title,
     author-info: default-author-info,
     abstract: default-abstract,
-    bibliography: default-bibliography,
     body: default-body,
     ..template,
   )
@@ -270,7 +194,7 @@
     author_list.push(author_list_item)
   }
 
-  (template.author-info)(author_list, affiliations)
+  (template.author-info)(author_list, affiliations, styles: template)
 
   (template.abstract)(abstract, keywords)
 
@@ -291,11 +215,12 @@
 #let appendix(
   body
 ) = context {
+  let (gettext, locale) = i18n(text.lang)
   counter(heading).update(0)
-  set heading(numbering: "A.1.", supplement: "Appendix")
+  set heading(numbering: "A.1.", supplement: gettext("appendix"))
   show heading: it => context block(above: 1em, below: 1em, {
     if it.level == 1 {
-      "Appendix " + counter(heading).display(it.numbering)
+      gettext("appendix") + " " + counter(heading).display(it.numbering)
     } else {
       counter(heading).display(it.numbering)
     }

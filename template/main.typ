@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.4.0": article, author-meta
+#import "@preview/starter-journal-article:0.5.0": article, author-meta
 
 #show: article.with(
   title: "Article Title",
