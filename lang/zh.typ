@@ -51,10 +51,11 @@
 
 #let default-abstract(abstract, keywords) = context {
   let (gettext, locale) = i18n(text.lang)
+  set par(first-line-indent: 0em)
   // Abstract and keyword block
   if abstract != [] {
     block(below: par.leading, {
-      box(width: 3em, strong([摘#h(1fr)要])) + strong([：])
+      box(width: 4em, box(width: 3em, strong([摘#h(1fr)要])) + strong([：]))
       abstract
     })
     if keywords.len() > 0 {
