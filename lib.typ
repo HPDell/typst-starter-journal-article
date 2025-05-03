@@ -79,17 +79,12 @@
   let (gettext, locale) = lang(text.lang)
   // Abstract and keyword block
   if abstract != [] {
-    stack(
-      dir: ttb,
-      spacing: 1em,
-      ..([
-        #heading(gettext("abstract"), numbering: none, outlined: false)
-        #abstract
-      ], if keywords.len() > 0 {
-        strong(gettext("keywords.title"))
-        strfmt(gettext("keywords.text"), keywords: keywords.join(gettext("keywords.sep")))
-      } else {none} )
-    )
+    heading(gettext("abstract"), numbering: none, outlined: false)
+    par(..locale("abstract.par"), abstract)
+    if keywords.len() > 0 {
+      strong(gettext("keywords.title"))
+      strfmt(gettext("keywords.text"), keywords: keywords.join(gettext("keywords.sep")))
+    }
   }
   v(1em)
 }
@@ -102,8 +97,9 @@
 }
 
 #let default-body(body) = context {
+  let (gettext, locale) = lang(text.lang)
   show heading.where(level: 1): set block(above: 1em, below: 1em)
-  set par(first-line-indent: (amount: 2em, all: text.lang == "zh"))
+  set par(..locale("body.par"))
   set figure(placement: top)
   set figure.caption(separator: ". ")
   show figure.where(kind: table): set figure.caption(position: top)

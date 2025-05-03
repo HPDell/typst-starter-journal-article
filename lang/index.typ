@@ -1,5 +1,5 @@
+#import "l10n.typ": l10n
 #let i18n = yaml("i18n.yaml")
-#let l10n = yaml("l10n.yaml")
 
 #let lookup(key, dict, lang) = {
   let lookup = dict.at(lang, default: i18n.en)
