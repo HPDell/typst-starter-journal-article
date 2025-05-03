@@ -33,13 +33,6 @@
   affiliations: affiliations,
   abstract: [#kouhu(indices: range(1, 2))],
   keywords: ("Typst", "模板", "期刊论文"),
-  template: (
-    title: (title) => {
-      set align(left)
-      set text(size: 1.5em, weight: "bold", style: "italic")
-      title
-    }
-  )
 )
 
 #set heading(numbering: "1.")
@@ -74,7 +67,7 @@
 
 = 致谢
 
-#lorem(20)
+#kouhu(length: 20)
 
 #bibliography(
   bytes("@article{Moran_1950, title={Notes on Continuous Stochastic Phenomena}, volume={37}, ISSN={0006-3444}, DOI={10.2307/2332142}, number={1/2}, journal={Biometrika}, publisher={[Oxford University Press, Biometrika Trust]}, author={Moran, P. A. P.}, year={1950}, pages={17–23} }"),

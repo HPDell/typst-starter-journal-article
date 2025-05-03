@@ -1,22 +1,9 @@
 #import "l10n.typ": l10n
-#let i18n = yaml("i18n.yaml")
 
-#let lookup(key, dict, lang) = {
-  let lookup = dict.at(lang, default: i18n.en)
-  let keys = key.split(".")
-  for k in keys {
-    if type(lookup) == dictionary and lookup.keys().contains(k) {
-      lookup = lookup.at(k)
-    } else {
-      panic("Key not found: " + key)
-    }
-  }
-  lookup
-}
+#import "en.typ"
+#import "zh.typ"
 
-#let lang(lang) = {
-  (
-    gettext: (key) => lookup(key, i18n, lang),
-    locale: (key) => lookup(key, l10n, lang),
-  )
-}
+#let templates = (
+  en: en.template,
+  zh: zh.template,
+)
