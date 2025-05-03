@@ -24,7 +24,7 @@
   if author.cofirst == "thefirst" [
     #footnote(gettext("cofirst")) <fnt:cofirst-author>
   ] else if author.cofirst == "cofirst" [
-    // #footnote(<fnt:cofirst-author>)
+    #footnote(<fnt:cofirst-author>)
   ]
 }
 
