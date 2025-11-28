@@ -156,17 +156,17 @@
       // record the first affiliation as the primary affiliation,
       au_inst_primary = affiliations.at(au_inst_id.first())
       // and convert each affiliation's label to index
-      let au_inst_index = au_inst_id.map(id => inst_keys.position(key => key == id))
+      let au_inst_keys = au_inst_id.map(id => inst_keys.find(key => key == id))
       // Output affiliation
-      author_list_item.insert("insts", au_inst_index)
+      author_list_item.insert("insts", au_inst_keys)
     } else if (type(au_inst_id) == str) {
       // If the author belongs to only one affiliation,
       // set this as the primary affiliation
       au_inst_primary = affiliations.at(au_inst_id)
       // convert the affiliation's label to index
-      let au_inst_index = inst_keys.position(key => key == au_inst_id)
+      let au_inst_key = inst_keys.find(key => key == au_inst_id)
       // Output affiliation
-      author_list_item.insert("insts", (au_inst_index,))
+      author_list_item.insert("insts", (au_inst_key,))
     }
 
     // Corresponding author
@@ -194,7 +194,16 @@
     author_list.push(author_list_item)
   }
 
-  (template.author-info)(author_list, affiliations, styles: template)
+  let used_affiliations_keys = author_list.map(it => it.insts).flatten().dedup()
+  let used_affiliations = used_affiliations_keys.map(it => (it, affiliations.at(it))).to-dict()
+  
+  author_list = author_list.map(au => (
+    :
+    ..au,
+    insts: au.insts.map(it => used_affiliations_keys.position(key => key == it))
+  ))
+
+  (template.author-info)(author_list, used_affiliations, styles: template)
 
   (template.abstract)(abstract, keywords)
 

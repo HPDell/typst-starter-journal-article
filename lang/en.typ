@@ -49,8 +49,7 @@
     ..styles
   )
   (styles.author)(authors)
-  let used_affiliations = authors.map(it => it.insts).flatten().dedup().map(it => affiliations.keys().at(it))
-  (styles.affiliation)(used_affiliations.map(it => affiliations.at(it)))
+  (styles.affiliation)(affiliations.values())
 }
 
 #let default-abstract(abstract, keywords) = context {
