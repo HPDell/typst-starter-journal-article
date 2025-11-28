@@ -365,6 +365,12 @@ Example:
 
 ## Changelog
 
+### 0.5.1
+
+Improvements:
+
+- Fix: the numbering of affiliations
+
 ### 0.5.0
 
 Breaking changes:
