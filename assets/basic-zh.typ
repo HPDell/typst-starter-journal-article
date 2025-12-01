@@ -1,4 +1,4 @@
-#import "@preview/starter-journal-article:0.5.0": article, author-meta
+#import "@preview/starter-journal-article:0.5.1": article, author-meta
 #import "@preview/kouhu:0.2.0": kouhu
 #import "@local/ctyp:0.1.0": ctyp
 
